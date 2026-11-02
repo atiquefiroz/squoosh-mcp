@@ -46,6 +46,10 @@ export class Engine {
 
   constructor(sandbox: Sandbox) {
     this.sandbox = sandbox;
+    // Batches touch each file once, so libvips' operation cache only costs memory. It also keeps
+    // files it read open (WebP is memory-mapped), and Windows cannot delete or replace an open file.
+    sharp.cache(false);
+    sharp.concurrency(config.vipsThreads);
   }
 
   /** Tool and codec versions: part of the "unchanged" key, so upgrades redo files (D15). */

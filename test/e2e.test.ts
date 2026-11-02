@@ -52,6 +52,10 @@ describe('squoosh-mcp over MCP', () => {
     expect(tools.find((t) => t.name === 'analyze_images')!.annotations?.readOnlyHint).toBe(true);
   });
 
+  it("turns off sharp's file cache (regression: Windows could not delete outputs the cache held open)", () => {
+    expect(sharp.cache().files.max).toBe(0);
+  });
+
   it('analyses and classifies, skipping vector files with a reason', async () => {
     const r = await call('analyze_images', { paths: ['.'], deep: true });
     const data = r.structuredContent as { summary: { files: number; skipped: unknown[] }; items: { path: string; class: string }[] };

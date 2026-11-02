@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import sharp from 'sharp';
 import { config } from './config.js';
 import { Engine } from './core/engine.js';
 import { Sandbox } from './core/paths.js';
@@ -25,10 +24,6 @@ if (args.includes('--version')) {
   console.error(config.version);
   process.exit(0);
 }
-
-// Batches touch each file once: libvips' operation cache only costs memory here.
-sharp.cache(false);
-sharp.concurrency(config.vipsThreads);
 
 const sandbox = await Sandbox.fromStartup(args, process.env.CLAUDE_PROJECT_DIR);
 const engine = new Engine(sandbox);
