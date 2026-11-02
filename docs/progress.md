@@ -118,9 +118,9 @@ This file tracks what has been built and documented. **This file owns the task I
 ### R1 Release (only on your go)
 | ID | Task | Status | Where | Notes |
 |---|---|---|---|---|
-| R1.1 | Public GitHub repo `atiquefiroz/squoosh-mcp`; first commit on `main` | doing | | Waiting for the repo to be created on GitHub |
-| R1.2 | Publish 0.1.0 to npm | todo | | The first publish uses your npm token from this Mac, because trusted publishing can only be set up for a package that already exists (docs.npmjs.com/cli/v12/commands/npm-trust) |
-| R1.2b | Later releases from CI through trusted publishing (OIDC), then revoke the token | todo | .github/workflows/release.yml | Runs when a GitHub release is published. No token is stored, and npm adds provenance itself (docs.npmjs.com/trusted-publishers). Direct publishing with tokens ends in January 2027 (docs.npmjs.com/about-access-tokens) |
+| R1.1 | Public GitHub repo `atiquefiroz/squoosh-mcp`; first commit on `main` | done |  | Public at github.com/atiquefiroz/squoosh-mcp. CI is green on 9 runs (macOS, Linux and Windows × Node 22, 24 and 26) |
+| R1.2 | Publish 0.1.0 to npm | done |  | Published on 2026-11-02 by you from this Mac, after turning on 2FA for the npm account (npm refused to publish without it). Checked from an empty folder: `npx -y squoosh-mcp@0.1.0` starts, answers the MCP handshake and lists the 5 tools |
+| R1.2b | Later releases from CI through trusted publishing (OIDC), then revoke the token | doing | .github/workflows/release.yml | Pushing a `vX.Y.Z` tag publishes to npm through trusted publishing and creates the GitHub release from CHANGELOG. Waiting on npmjs.com: Trusted Publisher → `release.yml`, then "Require 2FA and disallow tokens", then revoke the token (docs.npmjs.com/trusted-publishers) |
 | R1.3 | MCP Registry (`server.json`, `mcp-publisher`, GitHub OIDC) | todo | | |
 
 ## Documentation
@@ -152,3 +152,4 @@ This file tracks what has been built and documented. **This file owns the task I
 | 2026-11-02 | Release prep (D7: owner `atiquefiroz`). Package metadata points at the repo. CI actions moved to v7. Added `release.yml` for trusted publishing. `.env` is now git-ignored, because it holds the npm token |
 | 2026-11-02 | First CI run: the 3 macOS runs passed, and the 6 Linux and Windows runs failed in tests. (1) A real bug, seen on Windows: a missing path outside the allowed folders gave "Path not found", which revealed what exists outside. The sandbox now checks paths lexically first, against each folder as given and as its real path, as the official filesystem server does. (2) Two tests assumed macOS behaviour: names that ignore case, and `/` separators. 54 tests |
 | 2026-11-02 | Second CI run: Linux green; Windows passed every test but could not delete `optimized/photo.webp` in clean-up (`EBUSY`). Cause: sharp's operation cache keeps files it read open; a WebP is memory-mapped (`lsof`: 3 handles with the cache, 0 without), and Windows cannot delete an open file. The CLI turned the cache off, but the tests built the engine without it. `sharp.cache(false)` and `concurrency` moved into the `Engine` constructor, so every caller gets them. 55 tests |
+| 2026-11-02 | 0.1.0 published to npm, and the third CI run is green everywhere. `release.yml` now runs on `vX.Y.Z` tags, and creates the GitHub release |

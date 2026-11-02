@@ -48,6 +48,8 @@ Commit `wasm/ssim2/Cargo.lock` along with the new `.wasm`, and update `THIRD_PAR
 
 ## Releasing
 
-1. Move the "Unreleased" notes in `CHANGELOG.md` under the new version, then run `npm version <patch|minor|major>`. This commits and creates the `vX.Y.Z` tag.
-2. Push the commit and the tag: `git push --follow-tags`.
-3. Publish a GitHub release for that tag. `.github/workflows/release.yml` builds, tests and publishes to npm through trusted publishing, so no npm token is needed and npm adds provenance itself.
+1. In `CHANGELOG.md`, move the "Unreleased" notes under a `## X.Y.Z - YYYY-MM-DD` heading and commit.
+2. Run `npm version <patch|minor|major>`. This bumps `package.json`, commits, and creates the `vX.Y.Z` tag.
+3. Run `git push --follow-tags`.
+
+The tag starts `.github/workflows/release.yml`. It builds, tests and publishes to npm through trusted publishing, so no npm token is needed and npm adds provenance itself. It then creates the GitHub release with that version's CHANGELOG notes. Re-running it is safe: a version already on npm is not published again.

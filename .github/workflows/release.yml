@@ -1,19 +1,19 @@
 name: Release
 
-# Publishes to npm when a GitHub release is published. Uses npm trusted publishing
-# (OIDC), so no npm token is stored in GitHub, and npm adds provenance itself.
-# One-time setup on npmjs.com: package settings → Trusted publishing → GitHub Actions,
-# repository atiquefiroz/squoosh-mcp, workflow release.yml.
+# Pushing a vX.Y.Z tag publishes that version to npm and creates the GitHub release, with notes
+# from CHANGELOG.md. npm trusted publishing (OIDC) means no npm token is stored in GitHub, and npm
+# adds provenance itself. One-time setup on npmjs.com: package settings → Trusted Publisher →
+# GitHub Actions, user atiquefiroz, repository squoosh-mcp, workflow release.yml.
 on:
-  release:
-    types: [published]
+  push:
+    tags: ['v*']
 
 permissions:
-  contents: read
-  id-token: write
+  contents: write # create the GitHub release
+  id-token: write # npm trusted publishing
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -27,5 +27,19 @@ jobs:
         shell: bash
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - run: npm ci
-      # prepublishOnly builds and runs the tests first.
-      - run: npm publish
+      # prepublishOnly builds and runs the tests first. Re-runs skip a version already on npm.
+      - name: Publish to npm
+        shell: bash
+        run: |
+          if npm view "squoosh-mcp@${GITHUB_REF_NAME#v}" version > /dev/null 2>&1; then
+            echo "squoosh-mcp@${GITHUB_REF_NAME#v} is already on npm; skipping publish."
+          else
+            npm publish
+          fi
+      - name: GitHub release from CHANGELOG
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v v="${GITHUB_REF_NAME#v}" '/^## /{p = index($0, "## " v " ") == 1} p' CHANGELOG.md | tail -n +2 > notes.md
+          gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md
