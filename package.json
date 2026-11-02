@@ -1,0 +1,59 @@
+{
+  "name": "squoosh-mcp",
+  "version": "0.1.0",
+  "description": "Unofficial MCP server that batch-optimises local images with Squoosh's codecs and settings, choosing format, size and quality per image to a visual-quality target.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "squoosh",
+    "image-optimization",
+    "avif",
+    "webp",
+    "mozjpeg",
+    "oxipng",
+    "ssimulacra2"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atiquefiroz/squoosh-mcp.git"
+  },
+  "homepage": "https://github.com/atiquefiroz/squoosh-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/atiquefiroz/squoosh-mcp/issues"
+  },
+  "mcpName": "io.github.atiquefiroz/squoosh-mcp",
+  "type": "module",
+  "bin": {
+    "squoosh-mcp": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=22.17.0"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json && node -e \"require('fs').copyFileSync('wasm/ssim2.wasm','dist/core/ssim2.wasm')\"",
+    "build:wasm": "sh wasm/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "fixtures": "node test/fixtures/generate.ts",
+    "inspector": "npx -y @modelcontextprotocol/inspector@2.13.0 node dist/index.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "@napi-rs/image": "1.16.0",
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

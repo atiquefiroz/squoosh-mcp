@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+# Local test images (not part of the repo)
+images/
+# Rust build output
+wasm/ssim2/target/
+# Local scratch
+.tmp/
+# Generated test fixtures
+test/fixtures/generated/
+# Secrets (npm token etc.)
+.env
+.env.*
