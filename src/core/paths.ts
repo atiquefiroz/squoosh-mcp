@@ -26,20 +26,26 @@ export const toPosix = (p: string) => p.split(path.sep).join('/');
  */
 export class Sandbox {
   readonly roots: readonly string[];
+  /** Each root as given and as its real path, lower-cased, for the check before touching the disk. */
+  private readonly aliases: readonly string[];
 
-  private constructor(roots: readonly string[]) {
+  private constructor(roots: readonly string[], aliases: readonly string[]) {
     this.roots = roots;
+    this.aliases = aliases;
   }
 
   static async create(dirs: readonly string[]): Promise<Sandbox> {
     const roots: string[] = [];
+    const aliases = new Set<string>();
     for (const dir of dirs) {
-      const real = await fs.realpath(path.resolve(dir)).catch(() => undefined);
+      const abs = path.resolve(dir);
+      const real = await fs.realpath(abs).catch(() => undefined);
       if (!real) throw new Error(`Allowed directory does not exist: ${dir}`);
       if (!(await fs.stat(real)).isDirectory()) throw new Error(`Allowed path is not a directory: ${dir}`);
       if (!roots.some((r) => isInside(r, real))) roots.push(real);
+      aliases.add(abs.toLowerCase()).add(real.toLowerCase());
     }
-    return new Sandbox(roots);
+    return new Sandbox(roots, [...aliases]);
   }
 
   /**
@@ -51,10 +57,10 @@ export class Sandbox {
     if (projectDir) {
       const real = await fs.realpath(projectDir).catch(() => undefined);
       if (real && real !== (await fs.realpath(os.homedir()).catch(() => os.homedir())) && !isRoot(real)) {
-        return Sandbox.create([real]);
+        return Sandbox.create([projectDir]);
       }
     }
-    return new Sandbox([]);
+    return new Sandbox([], []);
   }
 
   get describe(): string {
@@ -81,9 +87,19 @@ export class Sandbox {
     return path.normalize(path.isAbsolute(p) ? p : path.resolve(this.roots[0]!, p));
   }
 
+  /**
+   * Lexical check before touching the disk, so a refused path reveals nothing about what exists
+   * outside. Case-insensitive because it only pre-filters: `contains` on the real path decides.
+   */
+  private reachable(abs: string): boolean {
+    const lower = abs.toLowerCase();
+    return this.aliases.some((alias) => isInside(alias, lower));
+  }
+
   /** Resolves an existing file or directory and checks it is inside the sandbox. */
   async existing(p: string): Promise<string> {
     const abs = this.absolute(p);
+    if (!this.reachable(abs)) throw this.outside(p);
     const real = await fs.realpath(abs).catch(() => {
       throw new UserError(`Path not found: ${p}`);
     });
@@ -94,6 +110,7 @@ export class Sandbox {
   /** Checks a path that may not exist yet (an output) through its deepest existing ancestor. */
   async writable(p: string): Promise<string> {
     const abs = this.absolute(p);
+    if (!this.reachable(abs)) throw this.outside(p);
     let probe = abs;
     let rest = '';
     for (;;) {

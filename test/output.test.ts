@@ -55,7 +55,11 @@ describe('OutputStore', () => {
     await expect(OutputStore.open(dir)).rejects.toThrow(UserError);
     await fs.writeFile(path.join(dir, 'theirs.avif'), 'x');
     await expect(store.claim('../a.png', ['theirs.avif'])).rejects.toThrow(/not created by squoosh-mcp/);
-    await expect(store.claim('../a.png', ['THEIRS.AVIF'])).rejects.toThrow(/not created by squoosh-mcp/);
+    // A case variant is the same file where names ignore case (macOS, Windows), and a new file on Linux.
+    const sameFile = await fs.access(path.join(dir, 'THEIRS.AVIF')).then(() => true, () => false);
+    const variant = store.claim('../a.png', ['THEIRS.AVIF']);
+    if (sameFile) await expect(variant).rejects.toThrow(/not created by squoosh-mcp/);
+    else await expect(variant).resolves.toBeUndefined();
     await store.record(entry('../a.png', 'mine.avif'));
     await expect(store.claim('../a.png', ['mine.avif'])).resolves.toBeUndefined();
     await store.close();

@@ -36,6 +36,19 @@ describe('Sandbox', () => {
     expect(() => sb.absolute('a\0.png')).toThrow(UserError);
   });
 
+  it('refuses a missing path outside as outside, not "not found" (regression: it revealed what exists there)', async () => {
+    const sb = await Sandbox.create([root]);
+    await expect(sb.existing(path.join(outside, 'missing.png'))).rejects.toThrow(/outside the allowed directories/);
+    await expect(sb.existing('missing.png')).rejects.toThrow(/Path not found/);
+  });
+
+  it('accepts paths through the folder as given, not only its real path', async () => {
+    const given = path.join(os.tmpdir(), path.basename(root));
+    const sb = await Sandbox.create([given]);
+    expect(await sb.existing(path.join(given, 'a.png'))).toBe(path.join(root, 'a.png'));
+    expect(await sb.writable(path.join(given, 'optimized', 'x.avif'))).toBe(path.join(root, 'optimized', 'x.avif'));
+  });
+
   it('allows new output paths inside and refuses them outside', async () => {
     const sb = await Sandbox.create([root]);
     expect(await sb.writable('optimized/deep/x.avif')).toBe(path.join(root, 'optimized/deep/x.avif'));

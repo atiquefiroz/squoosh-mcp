@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { DiscoveredFile } from '../src/core/discover.js';
 import { assignOutputs, candidateGroups, mergeSettings, sizesFor, targetScore, type CandidateInput } from '../src/core/planner.js';
@@ -35,7 +36,7 @@ describe('assignOutputs', () => {
     const stems = files.map((f) => out.get(f.abs)!.stem);
     expect(new Set(stems.map((s) => s.toLowerCase())).size).toBe(4);
     expect(out.get('/r/sub/photo.jpg')!.stem).toBe('sub/photo');
-    expect(out.get('/r/photo.jpg')!.outDir).toBe('/r/optimized');
+    expect(out.get('/r/photo.jpg')!.outDir).toBe(path.join('/r', 'optimized'));
   });
 
   it('prefixes the root name when several roots share one outputDir', () => {
