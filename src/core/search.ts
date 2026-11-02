@@ -34,7 +34,7 @@ export function pick(points: readonly Point[], target: number): { best: Point; m
 }
 
 /**
- * Finds the lowest quality whose score meets `target` in few encodes (plan A.5): secant
+ * Finds the lowest quality whose score meets `target` in few encodes: secant
  * interpolation inside the pass/fail bracket, bisection when the curve misbehaves, and
  * half-range jumps while only one side is known. The bracket is recomputed from every
  * measured point, so a non-monotonic score cannot trap the search.

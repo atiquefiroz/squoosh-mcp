@@ -22,8 +22,8 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = { policy: 'auto', target: 'balanced', metadata: 'strip' };
 
 /**
- * SSIMULACRA 2 targets. `balanced` is a placeholder until T1 calibrates it to the score of
- * squoosh.app's default output (decision D4); 90 is visually lossless on the metric's scale.
+ * SSIMULACRA 2 targets. `balanced` is a placeholder until it is calibrated to the score of
+ * squoosh.app's default output; 90 is visually lossless on the metric's scale.
  */
 export const TARGETS: Record<TargetPreset, number> = { small: 65, balanced: 75, high: 85, 'lossless-look': 90 };
 
@@ -73,14 +73,14 @@ export interface CandidateInput {
   features: Pick<Features, 'alphaUsed'>;
   sourceFormat: string;
   wideGamut: boolean;
-  /** Target 100: only lossless encoders (D4). */
+  /** Target 100: only lossless encoders. */
   lossless?: boolean;
   /** Longest side of the largest output. */
   maxSide: number;
 }
 
 /**
- * Candidate codecs, one group per output format to produce (plan §4.3). `auto`, `avif` and `keep`
+ * Candidate codecs, one group per output format to produce. `auto`, `avif` and `keep`
  * produce one group; `picture` adds a JPEG/PNG fallback group.
  */
 export function candidateGroups(policy: Policy, c: CandidateInput): CodecId[][] {
@@ -139,7 +139,7 @@ export function candidateGroups(policy: Policy, c: CandidateInput): CodecId[][] 
   });
 }
 
-/** Starting quality for a target, per codec (seeded from benchmarks; tuned in T1). */
+/** Starting quality for a target, per codec (seeded from benchmarks). */
 export function predictQuality(id: CodecId, target: number): number {
   const t = target - 70;
   switch (id) {

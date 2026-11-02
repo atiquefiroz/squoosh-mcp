@@ -38,7 +38,6 @@ Commit `wasm/ssim2/Cargo.lock` along with the new `.wasm`, and update `THIRD_PAR
 | `src/core/pipeline.ts` | Per-image decisions: classify → sizes → codec search → keep-original guard → write |
 | `src/core/metric*.ts` | SSIMULACRA 2 worker pool and tiling |
 | `src/core/output.ts` | Atomic writes, journal, manifest, lock, markup |
-| `docs/` | [Plan](docs/plan.md), [progress](docs/progress.md), [architecture](docs/architecture.md), [tool reference](docs/tools.md) |
 
 ## Changes
 

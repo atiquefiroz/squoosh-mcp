@@ -49,11 +49,11 @@ export class AbortError extends Error {
 
 /**
  * Bump when decision rules change what the same settings produce (candidate tables, targets,
- * search), so earlier outputs are redone. 2: `auto` became WebP only (D3).
+ * search), so earlier outputs are redone. 2: `auto` became WebP only.
  */
 export const PIPELINE_REVISION = 2;
 
-/** Hash of everything that changes outputs: a re-run with a different hash redoes the file (D15). */
+/** Hash of everything that changes outputs: a re-run with a different hash redoes the file. */
 export function settingsKey(s: Settings, engineKey: string): string {
   const { priority: _priority, ...relevant } = s;
   return createHash('sha256').update(JSON.stringify([relevant, engineKey, PIPELINE_REVISION])).digest('hex').slice(0, 16);

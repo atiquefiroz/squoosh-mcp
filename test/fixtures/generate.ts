@@ -1,4 +1,4 @@
-// Generates the edge-case fixture set (P4.2) into test/fixtures/generated (or the folder given).
+// Generates the edge-case fixture set into test/fixtures/generated (or the folder given).
 // Synthetic so the repo carries no third-party images. Run: npm run fixtures [-- <dir>]
 import fs from 'node:fs/promises';
 import path from 'node:path';

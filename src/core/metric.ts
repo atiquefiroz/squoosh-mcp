@@ -19,7 +19,7 @@ interface Tile {
 /**
  * Above this size, scoring uses two full-resolution 1024px tiles (centre + most detailed): bounded
  * time and WASM memory (risk R2). On 36 real encodes the tile minimum was 1.4 points stricter than
- * the whole-image score on average and at most 0.6 points more lenient (docs/progress.md, P2).
+ * the whole-image score on average and at most 0.6 points more lenient (measured on 36 encodes).
  */
 const TILE_THRESHOLD = 2_300_000;
 const TILE_SIDE = 1024;

@@ -90,7 +90,7 @@ function palettePng(frame: Frame, quality: number, dither: number): Promise<Buff
   return pipeline(frame).png({ palette: true, quality: Math.round(quality), dither, effort: 7 }).toBuffer();
 }
 
-/** Encodes one frame with Squoosh-equivalent settings (plan A.4). */
+/** Encodes one frame with Squoosh-equivalent settings. */
 export async function encode(frame: Frame, id: CodecId, o: EncodeOptions): Promise<Buffer> {
   const quality = Math.round(o.quality);
   switch (id) {

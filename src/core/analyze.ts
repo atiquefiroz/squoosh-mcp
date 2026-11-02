@@ -46,7 +46,7 @@ export interface Classification {
 
 const COLOUR_CAP = 4097;
 const FEATURE_MAX_PIXELS = 4_000_000;
-/** Starting thresholds (plan A.3); tuned on real images in T1. */
+/** Starting thresholds, to be tuned on a larger set of real images. */
 export const THRESHOLDS = {
   paletteColours: 256,
   iconSide: 256,
@@ -191,7 +191,7 @@ export async function measure(abs: string, header: Header): Promise<Features> {
 
 const distance = (value: number, threshold: number) => Math.min(1, Math.abs(value - threshold) / threshold);
 
-/** Pure classification from header facts and features (plan A.3). */
+/** Pure classification from header facts and features. */
 export function classify(header: Pick<Header, 'width' | 'height' | 'animated'>, f: Features): Classification {
   const t = THRESHOLDS;
   const needsFullChroma = f.hardEdgeRatio > t.screenshotEdges / 2 || f.uniqueColours < t.fullChromaColours;

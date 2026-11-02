@@ -137,8 +137,6 @@ Settings, at the top level or per file:
 
 The `balanced` preset targets 75 for photos and 85 for screenshots, graphics and icons. The metric is tuned on photos and doesn't weigh faint 1-pixel UI lines heavily enough, so flat content gets a higher target.
 
-Full reference: [docs/tools.md](docs/tools.md).
-
 ## Output
 
 New files go to an `optimized/` folder inside each input folder, mirroring its subfolders; you can set `outputDir` instead. Originals are never modified.
@@ -184,7 +182,7 @@ npm run fixtures     # edge-case test images → test/fixtures/generated/
 npm run inspector    # try the tools in the MCP Inspector
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/architecture.md](docs/architecture.md) and [docs/plan.md](docs/plan.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

@@ -52,7 +52,7 @@ export class Engine {
     sharp.concurrency(config.vipsThreads);
   }
 
-  /** Tool and codec versions: part of the "unchanged" key, so upgrades redo files (D15). */
+  /** Tool and codec versions: part of the "unchanged" key, so upgrades redo files. */
   engineKey(): Promise<string> {
     this.engineKeyPromise ??= oxipngAvailable().then((oxi) =>
       createHash('sha256').update(JSON.stringify([config.version, sharp.versions, oxi])).digest('hex').slice(0, 12),
